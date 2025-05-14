@@ -6,10 +6,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 //this particular class is an entity and it will create a table in db with class name so in db table name is - category
-@Entity
+//@Entity
 //or
 //if we need give sab specific table name so if db table name is-categories
-//@Entity(name="catgories")
+@Entity(name="catgories")
 public class Category {
     //categoryId to be our unique identifier and in db it is marked as primary key
     @Id
