@@ -3,6 +3,7 @@ package com.ecommerce.project.Controller;
 
 import com.ecommerce.project.Service.CategoryService;
 import com.ecommerce.project.model.Category;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,8 @@ public class CategoryController {
     @PostMapping("/public/categories")
     //or below is the request mapping at method level alternative method of api mapping
     //@RequestMapping(value = "/api/public/categories", method = RequestMethod.POST)
-    public ResponseEntity<String> createCategory(@RequestBody Category category){
+    //@Valid is used to validate the request body and make sure that the category name is not blank its checking the whether request is fulfilling or not if not it throws an 400 bad request response
+    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category){
         //adding a category here
         categoryService.createCategory(category);
         return new ResponseEntity<>("Category added successfully", HttpStatus.CREATED);
