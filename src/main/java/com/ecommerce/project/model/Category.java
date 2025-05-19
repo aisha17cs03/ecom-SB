@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,10 @@ public class Category {
     //Adding @NotBlank annotation to make sure that the category name is not blank and it is mandatory to provide a category name
     //so now in postman if we do not provide category name then it will throw an error 500 internal server error
     @NotBlank
+    //Adding @Size annotation to check the category name length should be 5 if it is less than the rror thrown 400 bad request and  message will be printed
+    //@Size(min=5) default behaviour/ message of @size the default message printed is size must be between 5 and 2147483647
+    //@Size custom message/ behaviour
+    @Size(min=5, message = "Category name should be minimum 5 characters")
     private String categoryName;
 
 
