@@ -25,9 +25,16 @@ public class CategoryServiceImplementation implements CategoryService{
 
     @Override
     public List<Category> getAllCategories() {
-        
-        //find all method is going to return all the categories that exist in the db
-        return categoryRepository.findAll();
+        //this method is used to find the category
+        List<Category> categories = categoryRepository.findAll();
+        //adding a condition/validation to check if the categories is empty or not
+        //if categories is empty then we are throwing an exception
+        if(categories.isEmpty()){
+            //if categories is empty then we are throwing an exception
+            throw new APIException("No category created till now");
+        }
+        //if categories is not empty then we are returning the categories
+        return categories;
     }
 
     @Override
