@@ -5,17 +5,13 @@ import com.ecommerce.project.exceptions.APIException;
 import com.ecommerce.project.exceptions.ResourceNotFoundException;
 import com.ecommerce.project.model.Category;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoryServiceImplementation implements CategoryService{
-    //doing a mapping that will return all the categories
+    //doing a mapping that will return all the categories id is managed by db
   //  private List<Category> categories = new ArrayList<>();
     //private Long nextId=1L;
     
@@ -43,7 +39,7 @@ public class CategoryServiceImplementation implements CategoryService{
         Category savedCategory= categoryRepository.findByCategoryName(category.getCategoryName());
         if(savedCategory != null){
             //if category is already present then we are throwing an exception
-            throw new APIException("Category with the name " + category.getCategoryName() + "already exists !!!");
+            throw new APIException("Category with the name " + category.getCategoryName() + " already exists !!!");
         }
         categoryRepository.save(category);
     }
