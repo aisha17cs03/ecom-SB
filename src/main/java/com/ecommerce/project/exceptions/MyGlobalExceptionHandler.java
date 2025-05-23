@@ -37,4 +37,13 @@ public class MyGlobalExceptionHandler {
         String message = e.getMessage();
         return new ResponseEntity<>(message,HttpStatus.NOT_FOUND);
     }
+
+    //Custom Exception
+    //@ExceptionHandler is used to handle the specific exception
+    // This method will handle the APIException which is thrown when the API is not found.
+    @ExceptionHandler(APIException.class)
+    public ResponseEntity<String> APIException(APIException e){
+        String message = e.getMessage();
+        return new ResponseEntity<>(message,HttpStatus.BAD_REQUEST);
+    }
 }
