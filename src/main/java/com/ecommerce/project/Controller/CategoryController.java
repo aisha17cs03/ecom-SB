@@ -1,6 +1,7 @@
 package com.ecommerce.project.Controller;
 
 
+import com.ecommerce.project.Payload.CategoryResponse;
 import com.ecommerce.project.Service.CategoryService;
 import com.ecommerce.project.model.Category;
 import jakarta.validation.Valid;
@@ -27,9 +28,9 @@ public class CategoryController {
     @GetMapping("/public/categories")
     //or below is the request mapping at method level alternative method of api mapping
     //@RequestMapping(value = "/api/public/categories", method = RequestMethod.GET)
-    public ResponseEntity<List<Category>> getAllCategories() {
-        final List<Category> categories = categoryService.getAllCategories();
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+    public ResponseEntity<CategoryResponse> getAllCategories() {
+       CategoryResponse categoryResponse = categoryService.getAllCategories();
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     //adding a new categories with the help of post mapping request

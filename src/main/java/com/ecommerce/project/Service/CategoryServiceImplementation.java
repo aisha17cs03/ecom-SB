@@ -1,9 +1,12 @@
 package com.ecommerce.project.Service;
 
+import com.ecommerce.project.Payload.CategoryDTO;
+import com.ecommerce.project.Payload.CategoryResponse;
 import com.ecommerce.project.Repositories.CategoryRepository;
 import com.ecommerce.project.exceptions.APIException;
 import com.ecommerce.project.exceptions.ResourceNotFoundException;
 import com.ecommerce.project.model.Category;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,21 +19,37 @@ public class CategoryServiceImplementation implements CategoryService{
     //private Long nextId=1L;
     
     //getting an instance of category repository so use autowired annotaion
+    //@autowired is used to inject the CategoryRepository bean
     @Autowired
+
+
+    //CategoryRepository is an interface that extends JpaRepository
     private CategoryRepository categoryRepository;
 
+    //getting an instance of ModelMapper so use autowired annotaion
+    //Autowired is used to inject the ModelMapper bean
+    @Autowired
+
+    //ModelMapper is used to map the entity to DTO and vice versa
+    private ModelMapper modelMapper;
+
     @Override
-    public List<Category> getAllCategories() {
+    public CategoryResponse getAllCategories() {
         //this method is used to find the category
         List<Category> categories = categoryRepository.findAll();
         //adding a condition/validation to check if the categories is empty or not
         //if categories is empty then we are throwing an exception
-        if(categories.isEmpty()){
+
+        if(categories.isEmpty())
             //if categories is empty then we are throwing an exception
             throw new APIException("No category created till now");
-        }
-        //if categories is not empty then we are returning the categories
-        return categories;
+
+        List<CategoryDTO> categoryDTOS = categories.stream().
+                map(category -> modelMapper.map(category, CategoryDTO.class)).toList();
+        CategoryResponse categoryResponse = new CategoryResponse();
+        //setting the categoryDTOs to the categoryResponse
+        categoryResponse.setContent(categoryDTOS);
+        return categoryResponse;
     }
 
     @Override
