@@ -1,5 +1,6 @@
 package com.ecommerce.project.Service;
 
+import com.ecommerce.project.Payload.CategoryDTO;
 import com.ecommerce.project.Payload.CategoryResponse;
 import com.ecommerce.project.model.Category;
 
@@ -9,7 +10,7 @@ import java.util.List;
 public interface CategoryService {
     CategoryResponse getAllCategories();
 
-    void createCategory(Category category);
+    CategoryDTO createCategory(CategoryDTO categoryDTO);
 
     String deleteCategory(Long categoryId);
 
