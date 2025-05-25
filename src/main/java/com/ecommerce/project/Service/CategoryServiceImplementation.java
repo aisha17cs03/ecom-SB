@@ -77,13 +77,13 @@ public class CategoryServiceImplementation implements CategoryService{
     }
 
     @Override
-    public Category updateCategory(Category category, Long categoryId) {
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO, Long categoryId) {
         Category savedCategory= categoryRepository.findById(categoryId)
                 //ResourceNotFoundException is a custom exception that we have created to handle the resource not found exception in ResourceNotFoundException.java file
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "CategoryId", categoryId));
-
+        Category category=modelMapper.map(categoryDTO,Category.class);
         category.setCategoryId(categoryId);
         savedCategory=categoryRepository.save(category);
-        return savedCategory;
+        return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 }

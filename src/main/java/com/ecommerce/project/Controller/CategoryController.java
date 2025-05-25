@@ -65,11 +65,11 @@ public class CategoryController {
     @PutMapping("/public/categories/{categoryId}")
     //or below is the request mapping at method level alternative method of api mapping
     //@RequestMapping(value = "/api/public/categories", method = RequestMethod.PUT)
-    public ResponseEntity<String> updateCategory(@Valid @RequestBody Category category,
+    public ResponseEntity<CategoryDTO> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO,
                                                  @PathVariable Long categoryId){
         // try{
-        Category savedCategory= categoryService.updateCategory(category,categoryId);
-        return new ResponseEntity<>("Updated category with categoryId: " + category, HttpStatus.OK);
+        CategoryDTO savedCategoryDTO= categoryService.updateCategory(categoryDTO,categoryId);
+        return new ResponseEntity<>(savedCategoryDTO, HttpStatus.OK);
         //}catch (ResponseStatusException e){
         // return new ResponseEntity<>(e.getReason(),e.getStatusCode());
         //}
