@@ -49,11 +49,11 @@ public class CategoryController {
     @DeleteMapping("/admin/categories/{categoryId}")
     //or below is the request mapping at method level alternative method of api mapping
     //@RequestMapping(value = "/api/public/categories", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId){
+    public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long categoryId){
        // try {
-            String status = categoryService.deleteCategory(categoryId);
+            CategoryDTO deleteCategory= categoryService.deleteCategory(categoryId);
             //way-1
-            return new ResponseEntity<>(status, HttpStatus.OK);
+            return new ResponseEntity<>(deleteCategory, HttpStatus.OK);
             // we have other method also for creating an ResponseEntity
             //way-2
             //return ResponseEntity.ok(status);
