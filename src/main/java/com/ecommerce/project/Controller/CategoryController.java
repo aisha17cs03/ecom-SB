@@ -1,6 +1,7 @@
 package com.ecommerce.project.Controller;
 
 
+import com.ecommerce.project.Config.AppConstants;
 import com.ecommerce.project.Payload.CategoryDTO;
 import com.ecommerce.project.Payload.CategoryResponse;
 import com.ecommerce.project.Service.CategoryService;
@@ -41,8 +42,10 @@ public class CategoryController {
     //or below is the request mapping at method level alternative method of api mapping
     //@RequestMapping(value = "/api/public/categories", method = RequestMethod.GET)
     //@RequestParam is used to get the page number and page size from the request parameter
-    public ResponseEntity<CategoryResponse> getAllCategories(@RequestParam(name="pageNumber") Integer pageNumber,
-                                                             @RequestParam(name="pageSize")Integer pageSize) {
+    //defaultValue is used to set the default value if the parameter is not present in the request
+    //reuired is set to false because if the parameter is not present in the request then it will take the default value not throw an bad request 400 error.
+    public ResponseEntity<CategoryResponse> getAllCategories(@RequestParam(name="pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+                                                             @RequestParam(name="pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false)Integer pageSize) {
        CategoryResponse categoryResponse = categoryService.getAllCategories(pageNumber, pageSize);
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
