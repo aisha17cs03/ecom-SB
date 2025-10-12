@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,12 +41,17 @@ public class CategoryServiceImplementation implements CategoryService{
     //PageNumber is the number of the page that we want to retrieve
     //PageSize is the number of the records that we want to retrieve in a page
     //PageNumber and PageSize are passed as request parameters in the URL.
-    public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize) {
+    public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        //sorting added and sorting done by sortBy and sortOrder if sortOrder is asc then ascending else descending.
+        Sort sortByAndOrder=sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
         //Pageable is an interface that provides pagination information
         //pageDetails is an object of pageable interface
         //PageRequest is a class that implements the pageable interface
         //Page <Category> is a class that provides pagination information for category entity
-        Pageable pageDetails= PageRequest.of(pageNumber, pageSize);
+        //Pass the sortByAndOrder to the PageRequest.of() method to sort the categories.
+        Pageable pageDetails= PageRequest.of(pageNumber, pageSize, sortByAndOrder);
         Page<Category> categoryPage= categoryRepository.findAll(pageDetails);
 
         //getting the content of the page
@@ -66,7 +72,7 @@ public class CategoryServiceImplementation implements CategoryService{
         CategoryResponse categoryResponse = new CategoryResponse();
         //setting the categoryDTOs to the categoryResponse
         categoryResponse.setContent(categoryDTOS);
-        //information(metadata) abount the pagination
+        //information(metadata) about the pagination
         //setting the pagination information to the categoryResponse
         //setting the page number, page size, total elements, total pages and last page to the categoryResponse.
 

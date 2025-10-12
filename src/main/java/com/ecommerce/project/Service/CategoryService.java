@@ -9,7 +9,7 @@ import java.util.List;
 //making use of interface to promote the loose coupling and modularity in my code base
 public interface CategoryService {
     //PageNumber and PageSize is used for pagination
-    CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize);
+    CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     CategoryDTO createCategory(CategoryDTO categoryDTO);
 

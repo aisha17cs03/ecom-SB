@@ -45,8 +45,13 @@ public class CategoryController {
     //defaultValue is used to set the default value if the parameter is not present in the request
     //reuired is set to false because if the parameter is not present in the request then it will take the default value not throw an bad request 400 error.
     public ResponseEntity<CategoryResponse> getAllCategories(@RequestParam(name="pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
-                                                             @RequestParam(name="pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false)Integer pageSize) {
-       CategoryResponse categoryResponse = categoryService.getAllCategories(pageNumber, pageSize);
+                                                             @RequestParam(name="pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false)Integer pageSize,
+                                                             //sorting added
+                                                             //sortBy to sort the categories by name or id
+                                                             //sortOrder to sort the categories in ascending or descending ordSORT_CATEGORIES_BYer
+                                                             @RequestParam(name="sortBy", defaultValue = AppConstants.SORT_CATEGORIES_BY, required = false) String sortBy,
+                                                             @RequestParam(name="sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
+       CategoryResponse categoryResponse = categoryService.getAllCategories(pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
