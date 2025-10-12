@@ -6,6 +6,7 @@ import com.ecommerce.project.Payload.CategoryResponse;
 import com.ecommerce.project.Service.CategoryService;
 import com.ecommerce.project.model.Category;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +18,22 @@ import java.util.List;
 @RequestMapping("/api")//api is common all the method of mappping so this common thing we write in request mapping and every
 //method we will remove /api
 public class CategoryController {
-
+    @Autowired
     private CategoryService categoryService;
     //constructor
 
-
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
+    @GetMapping("/echo")
+    // if @RequestParam is not present in the request parameter then it will take the default value and if
+    //@RequestParam is present in the request parameter then it will take the value from the request paramerter
+    //In @RequestParam if we don't provide the required attribute then by default it is true and if the parameter is not present in request then it will theow bad request 400 error
+    //In @RequestParam if we provide the required attribute as false, then if the parameter is not present in request then it will take the null value.
+    public ResponseEntity<String> echomessage(@RequestParam(name="message", required = false) String message){
+    //public ResponseEntity<String> echomessage(@RequestParam(name="message", defaultValue="Hello") String message)
+         return new ResponseEntity<>("Echoed message"+ message, HttpStatus.OK);
+}
+//    public CategoryController(CategoryService categoryService) {
+//        this.categoryService = categoryService;
+//    }
 
     @GetMapping("/public/categories")
     //or below is the request mapping at method level alternative method of api mapping
