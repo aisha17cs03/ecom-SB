@@ -8,6 +8,9 @@ import com.ecommerce.project.exceptions.ResourceNotFoundException;
 import com.ecommerce.project.model.Category;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,9 +37,23 @@ public class CategoryServiceImplementation implements CategoryService{
     private ModelMapper modelMapper;
 
     @Override
-    public CategoryResponse getAllCategories() {
+    //PageNumber is the number of the page that we want to retrieve
+    //PageSize is the number of the records that we want to retrieve in a page
+    //PageNumber and PageSize are passed as request parameters in the URL.
+    public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize) {
+        //Pageable is an interface that provides pagination information
+        //pageDetails is an object of pageable interface
+        //PageRequest is a class that implements the pageable interface
+        //Page <Category> is a class that provides pagination information for category entity
+        Pageable pageDetails= PageRequest.of(pageNumber, pageSize);
+        Page<Category> categoryPage= categoryRepository.findAll(pageDetails);
+
+        //getting the content of the page
+        // getContent() method is used to get the content of the page
+        //it returns a list of categories
+        List<Category> categories=categoryPage.getContent();
         //this method is used to find the category
-        List<Category> categories = categoryRepository.findAll();
+//        List<Category> categories = categoryRepository.findAll();
         //adding a condition/validation to check if the categories is empty or not
         //if categories is empty then we are throwing an exception
 
