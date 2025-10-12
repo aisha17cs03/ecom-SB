@@ -66,6 +66,15 @@ public class CategoryServiceImplementation implements CategoryService{
         CategoryResponse categoryResponse = new CategoryResponse();
         //setting the categoryDTOs to the categoryResponse
         categoryResponse.setContent(categoryDTOS);
+        //information(metadata) abount the pagination
+        //setting the pagination information to the categoryResponse
+        //setting the page number, page size, total elements, total pages and last page to the categoryResponse.
+
+        categoryResponse.setPageNumber(categoryPage.getNumber());
+        categoryResponse.setPageSize(categoryPage.getSize());
+        categoryResponse.setTotalElements(categoryPage.getTotalElements());
+        categoryResponse.setTotalPages(categoryPage.getTotalPages());
+        categoryResponse.setLastPage(categoryPage.isLast());
         return categoryResponse;
     }
 

@@ -22,5 +22,11 @@ import java.util.List;
 
 public class CategoryResponse {
     private List<CategoryDTO> content;
+    //Information(metadata) about the pagination
+    private Integer pageNumber;
+    private Integer pageSize;
+    private Long totalElements;
+    private Integer totalPages;
+    private Boolean lastPage;
 
 }
