@@ -41,4 +41,17 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
         //return response entity with productResponse and HTTP status code 200 (OK)
     }
+
+
+    //Get all products by category API
+    @GetMapping("/public/categories/{categoryId}/products")
+    public ResponseEntity<ProductResponse> getProductsByCategory(@PathVariable Long categoryId){
+        //PathVariable annotation is used to bind the categoryId path variable to the categoryId parameter
+        //call getProductsByCategory method of productService to get products by category from the database
+        //ProductResponse is the response object that contains the list of products
+        ProductResponse productResponse=productService.getProductsByCategory(categoryId);
+        //productService.getProductsByCategory(categoryId) fetches products for the given categoryId
+        return new ResponseEntity<>(productResponse, HttpStatus.OK);
+        //return response entity with productResponse and HTTP status code 200 (OK)
+    }
 }

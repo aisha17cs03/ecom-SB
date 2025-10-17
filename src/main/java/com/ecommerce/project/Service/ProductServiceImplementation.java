@@ -73,4 +73,25 @@ public class ProductServiceImplementation implements ProductService{
         return productResponse;
         //return ProductResponse object to controller
     }
+
+    @Override
+    public ProductResponse getProductsByCategory(Long categoryId) {
+        //get category from database
+        Category category=categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
+        //fetch products by category from database
+        List<Product> products=productRepository.findByCategoryOrderByPriceAsc(category);
+        //convert list of product entities to list of product DTOs
+        List<ProductDTO> productDTOS=products.stream().
+                map(product -> modelMapper.map(product, ProductDTO.class)).toList();
+        //create ProductResponse object
+        //ProductResponse is a custom class that contains list of product DTOs and other pagination details
+        ProductResponse productResponse=new ProductResponse();
+        //ProductResponse object to set list of product DTOs
+        productResponse.setContent(productDTOS);
+        //set list of product DTOs to ProductResponse object
+        return productResponse;
+        //return ProductResponse object to controller
+        //ProductDTO is a Data Transfer Object that contains product details
+    }
 }
