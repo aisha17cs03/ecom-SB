@@ -1,6 +1,7 @@
 package com.ecommerce.project.Service;
 
 import com.ecommerce.project.Payload.ProductDTO;
+import com.ecommerce.project.Payload.ProductResponse;
 import com.ecommerce.project.Repositories.CategoryRepository;
 import com.ecommerce.project.Repositories.ProductRepository;
 import com.ecommerce.project.exceptions.ResourceNotFoundException;
@@ -9,6 +10,8 @@ import com.ecommerce.project.model.Product;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ProductServiceImplementation implements ProductService{
@@ -47,5 +50,27 @@ public class ProductServiceImplementation implements ProductService{
         //save product to database
         return modelMapper.map(savedProduct, ProductDTO.class);
         //convert product entity to product DTO and return it
+    }
+
+    @Override
+    public ProductResponse getAllProducts() {
+        //get all products from database
+        List<Product> products = productRepository.findAll();
+        //convert list of product entities to list of product DTOs
+        List<ProductDTO> productDTOS=products.stream().
+                //products.stream() creates a stream of products
+                //products stream to map each product to productDTO
+                map(product -> modelMapper.map(product, ProductDTO.class)).toList();
+        //convert each product entity to product DTO using modelMapper
+        //create ProductResponse object
+        //ProductResponse is a custom class that contains list of product DTOs and other pagination details
+        //ProductDTO is a Data Transfer Object that contains product details
+        ProductResponse productResponse=new ProductResponse();
+        //ProductResponse object to set list of product DTOs
+        //ProductResponse object to return to controller
+        productResponse.setContent(productDTOS);
+        //set list of product DTOs to ProductResponse object
+        return productResponse;
+        //return ProductResponse object to controller
     }
 }
