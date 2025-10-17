@@ -18,10 +18,12 @@ public class Product {
     //productId is the primary key and productName is the name of the product and description is the description of the product and quantity is the quantity of the product and price is the price of the product and specialPrice is the special price of the product and category is the category of the product
     private Long productId;
     private String productName;
+    private String image;
     private String description;
     private Integer quantity;
-    private double price;
-    private double specialPrice;
+    private double price;//Rs.100
+    private double discount;//25%
+    private double specialPrice;//Rs.75
 
     @ManyToOne
     //Many products can belong to one category
