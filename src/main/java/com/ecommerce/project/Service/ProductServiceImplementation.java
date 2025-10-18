@@ -9,6 +9,7 @@ import com.ecommerce.project.model.Category;
 import com.ecommerce.project.model.Product;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +31,14 @@ public class ProductServiceImplementation implements ProductService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private FileService fileService;
+
+    @Value("${project.image}")
+    //injecting value from application.properties file
+    //refer to application.properties file for more details
+    private String path;
 
 
     @Override
@@ -179,8 +188,9 @@ public class ProductServiceImplementation implements ProductService {
 
         //upload image to server
         //Get the file name of the uploaded image
-        String path="images/";
-        String fileName=uploadImage(path, image);
+//        String path="images/";
+        //We will add this path in application.properties file here its hardcoded
+        String fileName=fileService.uploadImage(path, image);
         //path is the directory path where the image will be uploaded
         //uploadImage method uploads the image to the server and returns the file name
 
@@ -201,37 +211,5 @@ public class ProductServiceImplementation implements ProductService {
 
     }
 
-    private String uploadImage(String path, MultipartFile file) throws IOException {
-        //Logic to upload image to server
 
-
-        //File name of current/original image
-        String originalFileName=file.getOriginalFilename();
-        //Extract file extension from original file name
-
-
-        //Generate unique file name using current time in milliseconds
-        String randomId= UUID.randomUUID().toString();
-        //Create the complete file path by combining path, randomId, and file extension
-        //mat.jpg--->1234-->1234.jpg
-        String fileName=randomId.concat(originalFileName.substring(originalFileName.lastIndexOf(".")));
-        //complete file name with path
-        String filePath=path + File.separator + fileName;
-        //Create a File object for the destination path
-
-        //check if path exists, if not create
-        File floder=new File(path);
-        if(!floder.exists()) {
-            floder.mkdir();
-            //create directory if not exists
-            //mkdir() method creates the directory
-        }
-        //Upload the file to the server
-        Files.copy(file.getInputStream(), Paths.get(filePath));
-        //Files.copy() method copies the file to the destination path
-
-        //Return the file name
-        return fileName;
-        //return the file name to the caller
-    }
 }
