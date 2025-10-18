@@ -85,4 +85,17 @@ public class ProductController {
         return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
         //return response entity with updatedProductDTO and HTTP status code 200 (OK)
     }
+
+
+    //Delete product API
+    @DeleteMapping("/admin/products/{productId}")
+    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long productId){
+        //PathVariable annotation is used to bind the productId path variable to the productId parameter
+        //deleteProduct method of productService to delete product from the database
+        ProductDTO deleteProduct=productService.deleteProduct(productId);
+        //deleteProduct method takes productId as parameter
+        //deleteProduct is the response object that contains the details of the deleted product
+        return new ResponseEntity<>(deleteProduct, HttpStatus.OK);
+        //return response entity with deleteProduct and HTTP status code 200 (OK)
+    }
 }

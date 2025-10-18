@@ -142,4 +142,18 @@ public class ProductServiceImplementation implements ProductService {
         //return product DTO to controller
 
     }
+
+    @Override
+    public ProductDTO deleteProduct(Long productId) {
+        //delete product from database
+        Product product=productRepository.findById(productId).
+                //find product by productId
+                orElseThrow(()->new ResourceNotFoundException("Product", "productId", productId));
+        //if product not found, throw ResourceNotFoundException
+        //product object contains product details to be deleted
+        productRepository.delete(product);
+        //delete product from database
+        return modelMapper.map(product, ProductDTO.class);
+        //convert deleted product entity to product DTO and return it
+    }
 }
