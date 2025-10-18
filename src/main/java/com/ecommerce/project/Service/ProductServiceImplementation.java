@@ -27,7 +27,7 @@ public class ProductServiceImplementation implements ProductService {
 
 
     @Override
-    public ProductDTO addProduct(Long categoryId, Product product) {
+    public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
         //product and categoryId from controller
         //fetch category from database
         Category category = categoryRepository.findById(categoryId)
@@ -36,6 +36,8 @@ public class ProductServiceImplementation implements ProductService {
         //categoryId find category object from database
         //fetch category object from database
         //ResourceNotFoundException is a custom exception class that is thrown when a resource is not found in the database
+        Product product = modelMapper.map(productDTO, Product.class);
+        //convert product DTO to product entity
         product.setImage("default.png");
         //set default image to product
         product.setCategory(category);
@@ -118,10 +120,13 @@ public class ProductServiceImplementation implements ProductService {
     }
 
     @Override
-    public ProductDTO upadateProduct(Long productId, Product product) {
+    public ProductDTO upadateProduct(Long productId, ProductDTO productDTO) {
         //get existing product from database
         Product productFromDb=productRepository.findById(productId).
                 orElseThrow(()-> new ResourceNotFoundException("Product", "productId", productId));
+
+        Product product=modelMapper.map(productDTO, Product.class);
+        //convert product DTO to product entity
 
         //update product information with in request body
         //product object contains updated product details from controller

@@ -3,7 +3,7 @@ package com.ecommerce.project.Controller;
 import com.ecommerce.project.Payload.ProductDTO;
 import com.ecommerce.project.Payload.ProductResponse;
 import com.ecommerce.project.Service.ProductService;
-import com.ecommerce.project.model.Product;
+//import com.ecommerce.project.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +20,18 @@ public class ProductController {
 
     //Add all Products API
     @PostMapping("/admin/categories/{categoryId}/product")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody Product product,
+    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO,
                                                  @PathVariable Long categoryId){
         //RequestBody annotation is used to bind the request body to the product object.
         //PathVariable annotation is used to bind the categoryId path variable to the categoryId parameter
-        ProductDTO productDTO= productService.addProduct(categoryId, product);
+//        ProductDTO productDTO= productService.addProduct(categoryId, product);
+        ProductDTO savedProductDTO=productService.addProduct(categoryId, productDTO);
+        //savedProductDTO is the response object that contains the product details after saving to the database
         //call addProduct method of productService to add product to the database
         //productDTO is the response object that contains the product details
-        return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
+//        return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedProductDTO, HttpStatus.CREATED);
+        //savedProductDTO contains the saved product details
         //return response entity with productDTO and HTTP status code 201 (CREATED)
 
     }
@@ -74,12 +78,13 @@ public class ProductController {
 
     //Update product API
     @PutMapping("/admin/products/{productId}")
-    public ResponseEntity<ProductDTO> updateProduct(@RequestBody Product product,
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO productDTO,
                                                     @PathVariable Long productId){
         //RequestBody annotation is used to bind the request body to the product object.
         //PathVariable annotation is used to bind the productId path variable to the productId parameter
         //product object contains the updated product details
-        ProductDTO updatedProductDTO=productService.upadateProduct(productId, product);
+//        ProductDTO updatedProductDTO=productService.upadateProduct(productId, product);
+        ProductDTO updatedProductDTO=productService.upadateProduct(productId, productDTO);
         //call updateProduct method of productService to update product in the database
         //updateProduct method takes product object and productId as parameters
         return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
