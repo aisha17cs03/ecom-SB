@@ -1,5 +1,6 @@
 package com.ecommerce.project.Controller;
 
+import com.ecommerce.project.Config.AppConstants;
 import com.ecommerce.project.Payload.ProductDTO;
 import com.ecommerce.project.Payload.ProductResponse;
 import com.ecommerce.project.Service.ProductService;
@@ -43,8 +44,17 @@ public class ProductController {
 
     //Get All Products API
     @GetMapping("/public/products")
-    public ResponseEntity<ProductResponse> getAllProducts(){
-        ProductResponse productResponse= productService.getAllProducts();
+    public ResponseEntity<ProductResponse> getAllProducts(
+            @RequestParam(name="pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name="pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name="sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
+            @RequestParam(name="sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder
+    ){
+        //Adding pagination and sorting parameters to the getAllProducts API
+        ProductResponse productResponse= productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder);
+        //Adding all parameters to the getAllProducts method of productService
+
+//        ProductResponse productResponse= productService.getAllProducts();
         //call getAllProducts method of productService to get all products from the database
         //productResponse is the response object that contains the list of products
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
@@ -54,11 +64,17 @@ public class ProductController {
 
     //Get all products by category API
     @GetMapping("/public/categories/{categoryId}/products")
-    public ResponseEntity<ProductResponse> getProductsByCategory(@PathVariable Long categoryId){
+    public ResponseEntity<ProductResponse> getProductsByCategory(@PathVariable Long categoryId,
+                                                                 @RequestParam(name="pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+                                                                 @RequestParam(name="pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+                                                                 @RequestParam(name="sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
+                                                                 @RequestParam(name="sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder){
+        //Adding pagination and sorting parameters to the getProductsByCategory API
         //PathVariable annotation is used to bind the categoryId path variable to the categoryId parameter
         //call getProductsByCategory method of productService to get products by category from the database
         //ProductResponse is the response object that contains the list of products
-        ProductResponse productResponse=productService.getProductsByCategory(categoryId);
+        ProductResponse productResponse=productService.getProductsByCategory(categoryId, pageNumber, pageSize, sortBy, sortOrder);
+        //adding all parameters to the getProductsByCategory method of productService
         //productService.getProductsByCategory(categoryId) fetches products for the given categoryId
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
         //return response entity with productResponse and HTTP status code 200 (OK)
@@ -67,11 +83,17 @@ public class ProductController {
 
     //Get all products by keyword api
     @GetMapping("/public/products/keyword/{keyword}")
-    public ResponseEntity<ProductResponse> getProductsByKeyword(@PathVariable String keyword){
+    public ResponseEntity<ProductResponse> getProductsByKeyword(@PathVariable String keyword,
+                                                                @RequestParam(name="pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+                                                                @RequestParam(name="pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+                                                                @RequestParam(name="sortBy", defaultValue = AppConstants.SORT_PRODUCTS_BY, required = false) String sortBy,
+                                                                @RequestParam(name="sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder){
+        //Adding pagination and sorting parameters to the getProductsByKeyword API
         //PathVariable annotation is used to bind the keyword path variable to the keyword parameter
         //call searchProductByKeyword method of productService to get products by keyword from the database
         //keyword is a string that is used to search products
-        ProductResponse productResponse=productService.searchProductByKeyword(keyword);
+        ProductResponse productResponse=productService.searchProductByKeyword(keyword, pageNumber, pageSize, sortBy, sortOrder);
+        //adding all parameters to the searchProductByKeyword method of productService
         //ProductResponse is the response object that contains the list of products
         //productService.searchProductByKeyword(keyword) fetches products matching the given keyword
         //searchProductByKeyword is a method in ProductService that searches products based on the keyword

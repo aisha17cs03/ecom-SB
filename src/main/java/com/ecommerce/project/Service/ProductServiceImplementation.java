@@ -11,15 +11,15 @@ import com.ecommerce.project.model.Product;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ProductServiceImplementation implements ProductService {
@@ -85,9 +85,23 @@ public class ProductServiceImplementation implements ProductService {
     }
 
     @Override
-    public ProductResponse getAllProducts() {
+    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         //get all products from database
-        List<Product> products = productRepository.findAll();
+        Sort sortByAndOrder=sortOrder.equalsIgnoreCase("asc")?
+                Sort.by(sortBy).ascending()
+                :Sort.by(sortBy).descending();
+        //create Sort object based on sortBy and sortOrder parameters
+
+        Pageable pageDetails= PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        //create Pageable object based on pageNumber, pageSize and sortByAndOrder parameters
+
+        Page<Product> pageProducts=productRepository.findAll(pageDetails);
+        //fetch paginated products from database
+
+        List<Product> products=pageProducts.getContent();
+        //get list of products from Page object
+
+//        List<Product> products = productRepository.findAll();
         //convert list of product entities to list of product DTOs
         List<ProductDTO> productDTOS = products.stream().
                 //products.stream() creates a stream of products
@@ -98,9 +112,10 @@ public class ProductServiceImplementation implements ProductService {
         //ProductResponse is a custom class that contains list of product DTOs and other pagination details
         //ProductDTO is a Data Transfer Object that contains product details
 
-        if(products.isEmpty()){
-            throw new APIException("No products Exists!!!");
-        }
+//        if(products.isEmpty()){
+//            throw new APIException("No products Exists!!!");
+//        }
+        //commenting validation for no products found if required can be uncommented
         //if no products found, throw APIException
 
         ProductResponse productResponse = new ProductResponse();
@@ -108,17 +123,50 @@ public class ProductServiceImplementation implements ProductService {
         //ProductResponse object to return to controller
         productResponse.setContent(productDTOS);
         //set list of product DTOs to ProductResponse object
+
+        productResponse.setPageNumber(pageProducts.getNumber());
+        //set current page number to ProductResponse object
+        productResponse.setPageSize(pageProducts.getSize());
+        //set page size to ProductResponse object
+        productResponse.setTotalElements(pageProducts.getTotalElements());
+        //set total number of elements to ProductResponse object
+        productResponse.setTotalPages(pageProducts.getTotalPages());
+        //set total number of pages to ProductResponse object
+        productResponse.setLastPage(pageProducts.isLast());
+        //set whether it is the last page or not to ProductResponse object
+
         return productResponse;
         //return ProductResponse object to controller
     }
 
     @Override
-    public ProductResponse getProductsByCategory(Long categoryId) {
+    public ProductResponse getProductsByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         //get category from database
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
         //fetch products by category from database
-        List<Product> products = productRepository.findByCategoryOrderByPriceAsc(category);
+
+        Sort sortByAndOrder=sortOrder.equalsIgnoreCase("asc")?
+                Sort.by(sortBy).ascending()
+                :Sort.by(sortBy).descending();
+        //create Sort object based on sortBy and sortOrder parameters
+
+        Pageable pageDetails= PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        //create Pageable object based on pageNumber, pageSize and sortByAndOrder parameters
+
+        Page<Product> pageProducts=productRepository.findByCategoryOrderByPriceAsc(category, pageDetails);
+        //fetch paginated products from database
+
+        List<Product> products=pageProducts.getContent();
+        //get list of products from Page object
+
+        //if u want to add validation for product size is 0
+        //Adding validation for no products found in category
+        if(products.isEmpty()){
+            throw new APIException(category.getCategoryName()+" category has no products!!!");
+        }//if no products found in category, throw APIException category has no products
+
+
         //convert list of product entities to list of product DTOs
         List<ProductDTO> productDTOS = products.stream().
                 map(product -> modelMapper.map(product, ProductDTO.class)).toList();
@@ -128,27 +176,75 @@ public class ProductServiceImplementation implements ProductService {
         //ProductResponse object to set list of product DTOs
         productResponse.setContent(productDTOS);
         //set list of product DTOs to ProductResponse object
+
+        productResponse.setPageNumber(pageProducts.getNumber());
+        //set current page number to ProductResponse object
+        productResponse.setPageSize(pageProducts.getSize());
+        //set page size to ProductResponse object
+        productResponse.setTotalElements(pageProducts.getTotalElements());
+        //set total number of elements to ProductResponse object
+        productResponse.setTotalPages(pageProducts.getTotalPages());
+        //set total number of pages to ProductResponse object
+        productResponse.setLastPage(pageProducts.isLast());
+        //set whether it is the last page or not to ProductResponse object
+
         return productResponse;
         //return ProductResponse object to controller
         //ProductDTO is a Data Transfer Object that contains product details
     }
 
     @Override
-    public ProductResponse searchProductByKeyword(String keyword) {
+    public ProductResponse searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         //search products by keyword from database
-        List<Product> products = productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%');
+
+        Sort sortByAndOrder=sortOrder.equalsIgnoreCase("asc")?
+                Sort.by(sortBy).ascending()
+                :Sort.by(sortBy).descending();
+        //create Sort object based on sortBy and sortOrder parameters
+
+        Pageable pageDetails= PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+        //create Pageable object based on pageNumber, pageSize and sortByAndOrder parameters
+
+        Page<Product> pageProducts=productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%', pageDetails);
+        //fetch paginated products from database
+
+
+//        List<Product> products = productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%', pageDetails);
         //convert list of product entities to list of product DTOs
         //findByProductNameLikeIgnoreCase is a custom method in ProductRepository that searches products by name ignoring case
+
+        List<Product> products =pageProducts.getContent();
+        //get list of products from Page object
+
         List<ProductDTO> productDTOS = products.stream().
                 map(product -> modelMapper.map(product, ProductDTO.class)).toList();
         //create ProductResponse object
         //ProductResponse is a custom class that contains list of product DTOs and other pagination details
         //ProductDTO is a Data Transfer Object that contains product details
+
+        //Adding validation for no products found
+        if(products.isEmpty()){
+            throw new APIException("No products found matching the keyword: " + keyword);
+        }//if no products found, throw APIException No products found matching the keyword
+
+
         ProductResponse productResponse = new ProductResponse();
         //ProductResponse object to set list of product DTOs
         productResponse.setContent(productDTOS);
         //set list of product DTOs to ProductResponse object
         //setContent method sets the list of product DTOs to the ProductResponse object
+
+        productResponse.setPageNumber(pageProducts.getNumber());
+        //set current page number to ProductResponse object
+        productResponse.setPageSize(pageProducts.getSize());
+        //set page size to ProductResponse object
+        productResponse.setTotalElements(pageProducts.getTotalElements());
+        //set total number of elements to ProductResponse object
+        productResponse.setTotalPages(pageProducts.getTotalPages());
+        //set total number of pages to ProductResponse object
+        productResponse.setLastPage(pageProducts.isLast());
+        //set whether it is the last page or not to ProductResponse object
+
         return productResponse;
         //return ProductResponse object to controller
         //ProductResponse object contains the list of product DTOs matching the keyword
