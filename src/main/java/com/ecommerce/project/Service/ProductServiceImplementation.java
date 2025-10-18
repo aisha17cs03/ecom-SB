@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ProductServiceImplementation implements ProductService{
+public class ProductServiceImplementation implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
@@ -26,12 +26,11 @@ public class ProductServiceImplementation implements ProductService{
     private ModelMapper modelMapper;
 
 
-
     @Override
     public ProductDTO addProduct(Long categoryId, Product product) {
         //product and categoryId from controller
         //fetch category from database
-        Category category =categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
         //set category to product
         //categoryId find category object from database
@@ -57,15 +56,15 @@ public class ProductServiceImplementation implements ProductService{
         //get all products from database
         List<Product> products = productRepository.findAll();
         //convert list of product entities to list of product DTOs
-        List<ProductDTO> productDTOS=products.stream().
+        List<ProductDTO> productDTOS = products.stream().
                 //products.stream() creates a stream of products
                 //products stream to map each product to productDTO
-                map(product -> modelMapper.map(product, ProductDTO.class)).toList();
+                        map(product -> modelMapper.map(product, ProductDTO.class)).toList();
         //convert each product entity to product DTO using modelMapper
         //create ProductResponse object
         //ProductResponse is a custom class that contains list of product DTOs and other pagination details
         //ProductDTO is a Data Transfer Object that contains product details
-        ProductResponse productResponse=new ProductResponse();
+        ProductResponse productResponse = new ProductResponse();
         //ProductResponse object to set list of product DTOs
         //ProductResponse object to return to controller
         productResponse.setContent(productDTOS);
@@ -77,16 +76,16 @@ public class ProductServiceImplementation implements ProductService{
     @Override
     public ProductResponse getProductsByCategory(Long categoryId) {
         //get category from database
-        Category category=categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
         //fetch products by category from database
-        List<Product> products=productRepository.findByCategoryOrderByPriceAsc(category);
+        List<Product> products = productRepository.findByCategoryOrderByPriceAsc(category);
         //convert list of product entities to list of product DTOs
-        List<ProductDTO> productDTOS=products.stream().
+        List<ProductDTO> productDTOS = products.stream().
                 map(product -> modelMapper.map(product, ProductDTO.class)).toList();
         //create ProductResponse object
         //ProductResponse is a custom class that contains list of product DTOs and other pagination details
-        ProductResponse productResponse=new ProductResponse();
+        ProductResponse productResponse = new ProductResponse();
         //ProductResponse object to set list of product DTOs
         productResponse.setContent(productDTOS);
         //set list of product DTOs to ProductResponse object
@@ -98,15 +97,15 @@ public class ProductServiceImplementation implements ProductService{
     @Override
     public ProductResponse searchProductByKeyword(String keyword) {
         //search products by keyword from database
-        List<Product> products=productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%');
+        List<Product> products = productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%');
         //convert list of product entities to list of product DTOs
         //findByProductNameLikeIgnoreCase is a custom method in ProductRepository that searches products by name ignoring case
-        List<ProductDTO> productDTOS=products.stream().
+        List<ProductDTO> productDTOS = products.stream().
                 map(product -> modelMapper.map(product, ProductDTO.class)).toList();
         //create ProductResponse object
         //ProductResponse is a custom class that contains list of product DTOs and other pagination details
         //ProductDTO is a Data Transfer Object that contains product details
-        ProductResponse productResponse=new ProductResponse();
+        ProductResponse productResponse = new ProductResponse();
         //ProductResponse object to set list of product DTOs
         productResponse.setContent(productDTOS);
         //set list of product DTOs to ProductResponse object
@@ -116,5 +115,31 @@ public class ProductServiceImplementation implements ProductService{
         //ProductResponse object contains the list of product DTOs matching the keyword
         //If no products are found, an empty ProductResponse object is returned
         //The controller will handle the response accordingly
+    }
+
+    @Override
+    public ProductDTO upadateProduct(Long productId, Product product) {
+        //get existing product from database
+        Product productFromDb=productRepository.findById(productId).
+                orElseThrow(()-> new ResourceNotFoundException("Product", "productId", productId));
+
+        //update product information with in request body
+        //product object contains updated product details from controller
+        //set updated values to existing product
+        //getProductName, getDescription, getQuantity, getPrice, getDiscount, getSpecialPrice methods are used to get updated values from product object
+        productFromDb.setProductName(product.getProductName());
+        productFromDb.setDescription(product.getDescription());
+        productFromDb.setQuantity(product.getQuantity());
+        productFromDb.setPrice(product.getPrice());
+        productFromDb.setDiscount(product.getDiscount());
+        productFromDb.setSpecialPrice(product.getSpecialPrice());
+
+        //save updated product to database
+        Product sacedProduct=productRepository.save(productFromDb);
+        //convert updated product entity to product DTO and return it
+        return modelMapper.map(sacedProduct, ProductDTO.class);
+        //map updated product entity to product DTO using modelMapper
+        //return product DTO to controller
+
     }
 }

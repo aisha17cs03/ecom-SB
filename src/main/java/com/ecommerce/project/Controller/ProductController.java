@@ -56,7 +56,7 @@ public class ProductController {
     }
 
 
-    //Get all products by keyword
+    //Get all products by keyword api
     @GetMapping("/public/products/keyword/{keyword}")
     public ResponseEntity<ProductResponse> getProductsByKeyword(@PathVariable String keyword){
         //PathVariable annotation is used to bind the keyword path variable to the keyword parameter
@@ -69,5 +69,20 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.FOUND);
         //return response entity with productResponse and HTTP status code 302 (FOUND)
         //http status code 302 indicates that the requested resource has been found
+    }
+
+
+    //Update product API
+    @PutMapping("/admin/products/{productId}")
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody Product product,
+                                                    @PathVariable Long productId){
+        //RequestBody annotation is used to bind the request body to the product object.
+        //PathVariable annotation is used to bind the productId path variable to the productId parameter
+        //product object contains the updated product details
+        ProductDTO updatedProductDTO=productService.upadateProduct(productId, product);
+        //call updateProduct method of productService to update product in the database
+        //updateProduct method takes product object and productId as parameters
+        return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
+        //return response entity with updatedProductDTO and HTTP status code 200 (OK)
     }
 }
