@@ -10,8 +10,14 @@ import com.ecommerce.project.model.Product;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProductServiceImplementation implements ProductService {
@@ -160,5 +166,72 @@ public class ProductServiceImplementation implements ProductService {
         //delete product from database
         return modelMapper.map(product, ProductDTO.class);
         //convert deleted product entity to product DTO and return it
+    }
+
+    @Override
+    public ProductDTO upadateProductImage(Long productId, MultipartFile image) throws IOException {
+        //update product image in database
+        //Get product from database
+        Product productFromDb=productRepository.findById(productId).
+                orElseThrow(()->new ResourceNotFoundException("Product", "productId", productId));
+        //product object contains product details to be updated
+        //productId to find product from database
+
+        //upload image to server
+        //Get the file name of the uploaded image
+        String path="images/";
+        String fileName=uploadImage(path, image);
+        //path is the directory path where the image will be uploaded
+        //uploadImage method uploads the image to the server and returns the file name
+
+
+        //Updating new file name to product
+        productFromDb.setImage(fileName);
+        //set new file name to product object
+
+        Product updatedProduct=productRepository.save(productFromDb);
+        //Save updated product to database
+        //set new file name to product object
+
+        //return DTO after mapping product to DTO
+        return modelMapper.map(updatedProduct, ProductDTO.class);
+        //convert updated product entity to product DTO and return it
+        //map updated product entity to product DTO using modelMapper
+        //return product DTO to controller
+
+    }
+
+    private String uploadImage(String path, MultipartFile file) throws IOException {
+        //Logic to upload image to server
+
+
+        //File name of current/original image
+        String originalFileName=file.getOriginalFilename();
+        //Extract file extension from original file name
+
+
+        //Generate unique file name using current time in milliseconds
+        String randomId= UUID.randomUUID().toString();
+        //Create the complete file path by combining path, randomId, and file extension
+        //mat.jpg--->1234-->1234.jpg
+        String fileName=randomId.concat(originalFileName.substring(originalFileName.lastIndexOf(".")));
+        //complete file name with path
+        String filePath=path + File.separator + fileName;
+        //Create a File object for the destination path
+
+        //check if path exists, if not create
+        File floder=new File(path);
+        if(!floder.exists()) {
+            floder.mkdir();
+            //create directory if not exists
+            //mkdir() method creates the directory
+        }
+        //Upload the file to the server
+        Files.copy(file.getInputStream(), Paths.get(filePath));
+        //Files.copy() method copies the file to the destination path
+
+        //Return the file name
+        return fileName;
+        //return the file name to the caller
     }
 }

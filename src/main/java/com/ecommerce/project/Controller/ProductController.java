@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
@@ -102,5 +105,16 @@ public class ProductController {
         //deleteProduct is the response object that contains the details of the deleted product
         return new ResponseEntity<>(deleteProduct, HttpStatus.OK);
         //return response entity with deleteProduct and HTTP status code 200 (OK)
+    }
+
+    //Update Product image API
+    @PutMapping("/products/{productId}/image")
+    public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId,
+                                                         @RequestParam("image") MultipartFile image) throws IOException {
+        ProductDTO updatedProduct=productService.upadateProductImage(productId, image);
+        //updateProductImage method of productService to update product image in the database
+        //updateProductImage method takes productId and image as parameters
+        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+        //return response entity with updatedProduct and HTTP status code 200 (OK)
     }
 }
