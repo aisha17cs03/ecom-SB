@@ -4,6 +4,7 @@ import com.ecommerce.project.Payload.ProductDTO;
 import com.ecommerce.project.Payload.ProductResponse;
 import com.ecommerce.project.Repositories.CategoryRepository;
 import com.ecommerce.project.Repositories.ProductRepository;
+import com.ecommerce.project.exceptions.APIException;
 import com.ecommerce.project.exceptions.ResourceNotFoundException;
 import com.ecommerce.project.model.Category;
 import com.ecommerce.project.model.Product;
@@ -51,21 +52,36 @@ public class ProductServiceImplementation implements ProductService {
         //categoryId find category object from database
         //fetch category object from database
         //ResourceNotFoundException is a custom exception class that is thrown when a resource is not found in the database
-        Product product = modelMapper.map(productDTO, Product.class);
-        //convert product DTO to product entity
-        product.setImage("default.png");
-        //set default image to product
-        product.setCategory(category);
-        //set category to product
-        double specialPrice = product.getPrice() - ((product.getDiscount() * 0.01) * product.getPrice());
-        //calculate special price and set it to product
-        //specialPrice is calculated by subtracting the discount from the price
-        product.setSpecialPrice(specialPrice);
-        //set special price to product
-        Product savedProduct = productRepository.save(product);
-        //save product to database
-        return modelMapper.map(savedProduct, ProductDTO.class);
-        //convert product entity to product DTO and return it
+
+        boolean isProductNotPresent=true;
+        //check if product already exists in the category
+        List<Product> products=category.getProducts();
+        //get list of products from category
+        for(Product value : products){//iterate through list of products
+            if(value.getProductName().equalsIgnoreCase(productDTO.getProductName())){//check if product name already exists in the category equalsIgnoreCase is used to ignore case sensitivity
+                isProductNotPresent=false;//set isProductNotPresent to false if product name already exists
+                break;
+            }
+        }
+        if(isProductNotPresent) {//check if product already exists in the category
+            Product product = modelMapper.map(productDTO, Product.class);
+            //convert product DTO to product entity
+            product.setImage("default.png");
+            //set default image to product
+            product.setCategory(category);
+            //set category to product
+            double specialPrice = product.getPrice() - ((product.getDiscount() * 0.01) * product.getPrice());
+            //calculate special price and set it to product
+            //specialPrice is calculated by subtracting the discount from the price
+            product.setSpecialPrice(specialPrice);
+            //set special price to product
+            Product savedProduct = productRepository.save(product);
+            //save product to database
+            return modelMapper.map(savedProduct, ProductDTO.class);
+            //convert product entity to product DTO and return it
+        }else{
+            throw new APIException("Product already exists!!!");
+        }//if product already exists, throw APIException
     }
 
     @Override
@@ -81,6 +97,12 @@ public class ProductServiceImplementation implements ProductService {
         //create ProductResponse object
         //ProductResponse is a custom class that contains list of product DTOs and other pagination details
         //ProductDTO is a Data Transfer Object that contains product details
+
+        if(products.isEmpty()){
+            throw new APIException("No products Exists!!!");
+        }
+        //if no products found, throw APIException
+
         ProductResponse productResponse = new ProductResponse();
         //ProductResponse object to set list of product DTOs
         //ProductResponse object to return to controller

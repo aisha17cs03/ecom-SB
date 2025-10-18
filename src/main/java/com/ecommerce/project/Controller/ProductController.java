@@ -4,6 +4,7 @@ import com.ecommerce.project.Payload.ProductDTO;
 import com.ecommerce.project.Payload.ProductResponse;
 import com.ecommerce.project.Service.ProductService;
 //import com.ecommerce.project.model.Product;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,9 @@ public class ProductController {
 
     //Add all Products API
     @PostMapping("/admin/categories/{categoryId}/product")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO,
+    public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO,
                                                  @PathVariable Long categoryId){
+        //Valid annotation is used to validate the product object based on the constraints defined in the Product class.
         //RequestBody annotation is used to bind the request body to the product object.
         //PathVariable annotation is used to bind the categoryId path variable to the categoryId parameter
 //        ProductDTO productDTO= productService.addProduct(categoryId, product);
@@ -81,8 +83,9 @@ public class ProductController {
 
     //Update product API
     @PutMapping("/admin/products/{productId}")
-    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO productDTO,
+    public ResponseEntity<ProductDTO> updateProduct(@Valid @RequestBody ProductDTO productDTO,
                                                     @PathVariable Long productId){
+        //Valid annotation is used to validate the product object based on the constraints defined in the Product class.
         //RequestBody annotation is used to bind the request body to the product object.
         //PathVariable annotation is used to bind the productId path variable to the productId parameter
         //product object contains the updated product details

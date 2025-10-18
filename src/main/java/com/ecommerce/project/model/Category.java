@@ -1,14 +1,13 @@
 package com.ecommerce.project.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 //this particular class is an entity and it will create a table in db with class name so in db table name is - category
 //@Entity
@@ -37,6 +36,9 @@ public class Category {
     //@Size custom message/ behaviour
     @Size(min=5, message = "Category name should be minimum 5 characters")
     private String categoryName;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)//one category can have many products
+    private List<Product> products;
 
 
 //    //constructor
