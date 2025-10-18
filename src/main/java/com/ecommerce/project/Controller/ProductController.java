@@ -54,4 +54,20 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
         //return response entity with productResponse and HTTP status code 200 (OK)
     }
+
+
+    //Get all products by keyword
+    @GetMapping("/public/products/keyword/{keyword}")
+    public ResponseEntity<ProductResponse> getProductsByKeyword(@PathVariable String keyword){
+        //PathVariable annotation is used to bind the keyword path variable to the keyword parameter
+        //call searchProductByKeyword method of productService to get products by keyword from the database
+        //keyword is a string that is used to search products
+        ProductResponse productResponse=productService.searchProductByKeyword(keyword);
+        //ProductResponse is the response object that contains the list of products
+        //productService.searchProductByKeyword(keyword) fetches products matching the given keyword
+        //searchProductByKeyword is a method in ProductService that searches products based on the keyword
+        return new ResponseEntity<>(productResponse, HttpStatus.FOUND);
+        //return response entity with productResponse and HTTP status code 302 (FOUND)
+        //http status code 302 indicates that the requested resource has been found
+    }
 }

@@ -94,4 +94,27 @@ public class ProductServiceImplementation implements ProductService{
         //return ProductResponse object to controller
         //ProductDTO is a Data Transfer Object that contains product details
     }
+
+    @Override
+    public ProductResponse searchProductByKeyword(String keyword) {
+        //search products by keyword from database
+        List<Product> products=productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%');
+        //convert list of product entities to list of product DTOs
+        //findByProductNameLikeIgnoreCase is a custom method in ProductRepository that searches products by name ignoring case
+        List<ProductDTO> productDTOS=products.stream().
+                map(product -> modelMapper.map(product, ProductDTO.class)).toList();
+        //create ProductResponse object
+        //ProductResponse is a custom class that contains list of product DTOs and other pagination details
+        //ProductDTO is a Data Transfer Object that contains product details
+        ProductResponse productResponse=new ProductResponse();
+        //ProductResponse object to set list of product DTOs
+        productResponse.setContent(productDTOS);
+        //set list of product DTOs to ProductResponse object
+        //setContent method sets the list of product DTOs to the ProductResponse object
+        return productResponse;
+        //return ProductResponse object to controller
+        //ProductResponse object contains the list of product DTOs matching the keyword
+        //If no products are found, an empty ProductResponse object is returned
+        //The controller will handle the response accordingly
+    }
 }
